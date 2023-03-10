@@ -5,12 +5,11 @@ function getRandomNumber(from, to){
 
   return Math.random()*(to - from) + from;
 }
-console.log(getRandomNumber(1,9));
+let a= getRandomNumber(1,9);
 
 function checkStringLength(string, Maxlength){
 
   return String(string).length <= Maxlength;
 }
 
-console.log(checkStringLength('What is it?',2));
-console.log(checkStringLength('What is it?',11));
+let b = checkStringLength('What is it?',11);
