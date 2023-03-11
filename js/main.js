@@ -8,10 +8,11 @@ function getRandomNumber(a, b){
 function checkStringLength (string, length) {
   return string.length <= length;
 }
+checkStringLength("",0);
 
 function generatePhotos(number){
   let photos = new Array(number);
-  descritions = ['beautiful', 'sad', 'funny', 'sad', 'boring'];
+  const descritions = ['beautiful', 'sad', 'funny', 'sad', 'boring'];
 
   for (let i = 1; i<=number; i++){
     photos[i-1] = {
@@ -24,4 +25,4 @@ function generatePhotos(number){
   }
   return photos
 }
-console.log(generatePhotos(25)[1]);
+generatePhotos(25)[1];
