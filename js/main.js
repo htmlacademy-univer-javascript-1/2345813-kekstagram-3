@@ -25,4 +25,4 @@ function generatePhotos(number){
   }
   return photos;
 }
-console.log(generatePhotos(25)[2]);
+generatePhotos(25);
