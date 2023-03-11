@@ -17,7 +17,7 @@ function generatePhotos(number){
   for (let i = 1; i<=number; i++){
     photos[i-1] = {
       id: i,
-      url: 'photos/' + String(i),
+      url: `photos/${i}`,
       descrition: descritions[i % 5],
       likes: getRandomNumber(15,200),
       comments: getRandomNumber(0,200),
@@ -25,4 +25,4 @@ function generatePhotos(number){
   }
   return photos;
 }
-generatePhotos(25);
+console.log(generatePhotos(25)[2]);
