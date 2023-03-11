@@ -8,21 +8,21 @@ function getRandomNumber(a, b){
 function checkStringLength (string, length) {
   return string.length <= length;
 }
-checkStringLength("",0);
+checkStringLength('',0);
 
 function generatePhotos(number){
-  let photos = new Array(number);
+  const photos = new Array(number);
   const descritions = ['beautiful', 'sad', 'funny', 'sad', 'boring'];
 
   for (let i = 1; i<=number; i++){
     photos[i-1] = {
       id: i,
-      url: 'photos/' + i,
+      url: 'photos/' + String(i),
       descrition: descritions[i % 5],
       likes: getRandomNumber(15,200),
       comments: getRandomNumber(0,200),
-    }
+    };
   }
-  return photos
+  return photos;
 }
-generatePhotos(25)[1];
+generatePhotos(25);
