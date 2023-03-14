@@ -1,4 +1,5 @@
 import { getRandomNumber } from './util.js';
+export { generateRandomPhotos };
 function generatePhoto(id, url, descrition, likes, comments) {
   const photo = {
     id,
@@ -19,4 +20,3 @@ function generateRandomPhotos(number) {
   }
   return photos;
 }
-export { generateRandomPhotos };
