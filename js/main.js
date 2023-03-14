@@ -1,3 +1,2 @@
-import {generateRandomPhotos} from './data.js';
-
+import { generateRandomPhotos } from './data.js';
 generateRandomPhotos(25);
