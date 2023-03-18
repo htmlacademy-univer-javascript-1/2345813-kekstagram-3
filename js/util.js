@@ -1,5 +1,3 @@
-export { getRandomNumber };
-export { checkStringLength };
 function getRandomNumber(a, b) {
   const lower = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
   const upper = Math.floor(Math.max(Math.abs(a), Math.abs(b)));
@@ -11,4 +9,6 @@ function checkStringLength(string, length) {
   return string.length <= length;
 }
 
+export { getRandomNumber };
+export { checkStringLength };
 
