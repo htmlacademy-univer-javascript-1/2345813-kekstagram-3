@@ -16,7 +16,7 @@ function generateRandomPhotos(number) {
   const descritions = ['beautiful', 'sad', 'funny', 'sad', 'boring'];
 
   for (let i = 1; i <= number; i++) {
-    photos[i - 1] = generatePhoto(i, `photos/${i}`, descritions[i % 5], getRandomNumber(15, 200), getRandomNumber(0, 200));
+    photos[i - 1] = generatePhoto(i, `photos/${i}.jpg`, descritions[i % 5], getRandomNumber(15, 200), getRandomNumber(0, 200));
   }
   return photos;
 }
