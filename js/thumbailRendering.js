@@ -1,7 +1,7 @@
 function drawPhotos(photos) {
   const fragment = document.createDocumentFragment();
   const template = document.querySelector('#picture');
-  photos.forEach(photo => {
+  photos.forEach((photo) => {
     const picture = template.content.cloneNode(true);
 
     picture.querySelector('.picture__img').src = photo.url;
