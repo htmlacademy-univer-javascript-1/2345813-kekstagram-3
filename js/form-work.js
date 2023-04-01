@@ -30,11 +30,11 @@ window.onload = function () {
   // create the pristine instance
   const pristine = new Pristine(form);
 
-  form.addEventListener('submit', () => function () {
+  form.addEventListener('submit', (it) => function (it) {
     const valid = pristine.validate(); // returns true or false
 
     if (!valid){
-      e.preventDefault();
+      it.preventDefault();
     }
 
 
