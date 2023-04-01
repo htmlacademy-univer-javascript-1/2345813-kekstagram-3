@@ -1,9 +1,9 @@
-//import '../pristine/pristine.min.js'
-let loader = document.querySelector('#upload-file');
-let photoEditor = document.querySelector('.img-upload__overlay');
-let closeButton = document.querySelector('#upload-cancel');
+import '../pristine/pristine.min.js'
+const loader = document.querySelector('#upload-file');
+const photoEditor = document.querySelector('.img-upload__overlay');
+const closeButton = document.querySelector('#upload-cancel');
 
-function openImageEditor(evt){
+function openImageEditor(){
   photoEditor.classList.remove('hidden');
   document.body.classList.add('modal-open');
 }
@@ -21,3 +21,20 @@ function closeImageEditor(evt){
 
 document.addEventListener('keyup', closeImageEditor);
 closeButton.addEventListener('click', closeImageEditor);
+
+
+window.onload = function () {
+
+  var form = document.getElementById(".text__description");
+
+  // create the pristine instance
+  var pristine = new Pristine(form);
+
+  form.addEventListener('submit', function (e) {
+     e.preventDefault();
+
+     // check if the form is valid
+     var valid = pristine.validate(); // returns true or false
+
+  });
+};
