@@ -1,4 +1,4 @@
-import '../pristine/pristine.min.js'
+import '../pristine/pristine.min.js';
 const loader = document.querySelector('#upload-file');
 const photoEditor = document.querySelector('.img-upload__overlay');
 const closeButton = document.querySelector('#upload-cancel');
@@ -30,7 +30,7 @@ window.onload = function () {
   // create the pristine instance
   const pristine = new Pristine(form);
 
-  form.addEventListener('submit', function (e) {
+  form.addEventListener('submit', (e) => function (e) {
     const valid = pristine.validate(); // returns true or false
 
     if (!valid){
