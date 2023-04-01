@@ -25,7 +25,7 @@ closeButton.addEventListener('click', closeImageEditor);
 
 window.onload = function () {
 
-  const form = document.getElementById(".text__description");
+  const form = document.querySelector('#upload-select-image');
 
   // create the pristine instance
   const pristine = new Pristine(form);
