@@ -31,10 +31,12 @@ window.onload = function () {
   const pristine = new Pristine(form);
 
   form.addEventListener('submit', function (e) {
-     e.preventDefault();
+    const valid = pristine.validate(); // returns true or false
 
-     // check if the form is valid
-     const valid = pristine.validate(); // returns true or false
+    if (!valid){
+      e.preventDefault();
+    }
+
 
   });
 };
