@@ -50,10 +50,10 @@ const effectButtons = form.querySelectorAll('.effects__radio');
 let checkedButton = form.querySelector('#effect-none');
 
 const slider = form.querySelector('.effect-level__slider');
-let effectValue = form.querySelector('.effect-level__value');
+const effectValue = form.querySelector('.effect-level__value');
 
 function getSliderOption(effect) {
-  if (effect == 'chrome' || effect == 'sepia') {
+  if (effect === 'chrome' || effect === 'sepia') {
     return {
       range: {
         min: 0,
@@ -62,18 +62,18 @@ function getSliderOption(effect) {
       start: 1,
       step: 0.1,
       connect: 'lower',
-    }
+    };
   }
-  else if (effect == 'marvin') {
+  else if (effect === 'marvin') {
     return {
       range: {
         min: 0,
         max: 100,
       },
       start: 100,
-    }
+    };
   }
-  else if (effect == 'phobos') {
+  else if (effect === 'phobos') {
     return {
       range: {
         min: 0,
@@ -81,9 +81,9 @@ function getSliderOption(effect) {
       },
       start: 3,
       step: 0.1,
-    }
+    };
   }
-  else if (effect == 'heat') {
+  else if (effect === 'heat') {
     return {
       range: {
         min: 1,
@@ -91,7 +91,7 @@ function getSliderOption(effect) {
       },
       start: 3,
       step: 0.1,
-    }
+    };
   }
 }
 
