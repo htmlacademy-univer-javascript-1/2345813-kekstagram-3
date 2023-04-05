@@ -122,15 +122,16 @@ function effectChange(evt) {
 
 slider.noUiSlider.on('update', () => {
   effectValue.value = slider.noUiSlider.get();
-  editablePhoto.style.filter = (checkedButton.value === 'chrome')
+  editablePhoto.style.filter =
+  checkedButton.value === 'chrome'
     ? `grayscale(${effectValue.value})`
-    : (checkedButton.value === 'sepia')
+    : checkedButton.value === 'sepia'
     ? `sepia(${effectValue.value})`
-    : (checkedButton.value === 'marvin')
+    : checkedButton.value === 'marvin'
     ? `invert(${effectValue.value}%)`
-    : (checkedButton.value === 'phobos')
+    : checkedButton.value === 'phobos'
     ? `blur(${effectValue.value}px)`
-    : (checkedButton.value === 'heat')
+    : checkedButton.value === 'heat'
     ? `brightness(${effectValue.value})`
     : '';
 });
