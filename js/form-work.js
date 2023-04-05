@@ -10,7 +10,7 @@ function openImageEditor() {
   form.reset();
 }
 
-let editablePhoto = document.querySelector('#editable-photo');
+const editablePhoto = document.querySelector('#editable-photo');
 
 function closeImageEditor(evt) {
   if (evt.key === 'Escape' || evt.target === closeButton) {
@@ -95,7 +95,7 @@ function getSliderOption(effect) {
   }
 }
 
-noUiSlider.create(slider, getSliderOption('chrome'))
+noUiSlider.create(slider, getSliderOption('chrome'));
 slider.style.display = 'none';
 
 function effectChange(evt) {
@@ -107,7 +107,7 @@ function effectChange(evt) {
     editablePhoto.classList.remove(`effects__preview--${checkedButton.value}`);
     checkedButton = pressedButton;
 
-    if (pressedButton.value != 'none') {
+    if (pressedButton.value !== 'none') {
       slider.style.display = 'block';
       const sliderOption = getSliderOption(pressedButton.value);
       slider.noUiSlider.updateOptions(sliderOption);
@@ -120,23 +120,20 @@ function effectChange(evt) {
   }
 }
 
-
-
-
 slider.noUiSlider.on('update', () => {
   effectValue.value = slider.noUiSlider.get();
-  editablePhoto.style.filter = (checkedButton.value == 'chrome')
+  editablePhoto.style.filter = (checkedButton.value === 'chrome')
     ? `grayscale(${effectValue.value})`
-    : (checkedButton.value == 'sepia')
-      ? `sepia(${effectValue.value})`
-      : (checkedButton.value == 'marvin')
-        ? `invert(${effectValue.value}%)`
-        : (checkedButton.value == 'phobos')
-          ? `blur(${effectValue.value}px)`
-          : (checkedButton.value == 'heat')
-            ? `brightness(${effectValue.value})`
-            : '';
-})
+    : (checkedButton.value === 'sepia')
+    ? `sepia(${effectValue.value})`
+    : (checkedButton.value === 'marvin')
+    ? `invert(${effectValue.value}%)`
+    : (checkedButton.value === 'phobos')
+    ? `blur(${effectValue.value}px)`
+    : (checkedButton.value === 'heat')
+    ? `brightness(${effectValue.value})`
+    : '';
+});
 
 effectButtons.forEach((button) => {
   button.addEventListener('click', effectChange);
