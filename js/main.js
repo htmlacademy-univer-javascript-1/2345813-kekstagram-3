@@ -1,6 +1,5 @@
 import { generateRandomPhotoObjects } from './data.js';
 import { drawPhotos } from './thumbail-rendering.js';
+import { showServerError, loadPhotos } from './server-interaction.js';
 
-const photos = generateRandomPhotoObjects(25);
-drawPhotos(photos);
-
+loadPhotos(drawPhotos,showServerError);

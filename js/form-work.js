@@ -1,27 +1,32 @@
 import '../nouislider/nouislider.js';
+import { uploadErrorMessage,uploadSuccessMessage } from './messages.js';
+import { sendPhoto } from './server-interaction.js';
 const loader = document.querySelector('#upload-file');
 const photoEditor = document.querySelector('.img-upload__overlay');
 const closeButton = document.querySelector('#upload-cancel');
 const form = document.querySelector('.img-upload__form');
-
-function openImageEditor() {
-  photoEditor.classList.remove('hidden');
-  document.body.classList.add('modal-open');
-  form.reset();
-}
-
 const editablePhoto = document.querySelector('#editable-photo');
 
-function closeImageEditor(evt) {
-  if (evt.key === 'Escape' || evt.target === closeButton) {
-    photoEditor.classList.add('hidden');
-    document.body.classList.remove('modal-open');
+function openImageEditor(evt) {
+  photoEditor.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+  const uploadedImage = document.querySelector('#upload-file').files[0];
+  const fileReader = new FileReader();
+  fileReader.onloadend = function () {
+    editablePhoto.src = fileReader.result;
+  };
+  fileReader.readAsDataURL(uploadedImage);
+}
 
-    form.reset();
-    editablePhoto.removeAttribute('style');
-    editablePhoto.removeAttribute('class');
 
-  }
+function closeImageEditor() {
+  photoEditor.classList.add('hidden');
+  document.body.classList.remove('modal-open');
+
+  form.reset();
+  editablePhoto.removeAttribute('style');
+  editablePhoto.removeAttribute('class');
+
 }
 
 const zoomInButton = document.querySelector('.scale__control--bigger');
@@ -122,26 +127,59 @@ function effectChange(evt) {
 
 slider.noUiSlider.on('update', () => {
   effectValue.value = slider.noUiSlider.get();
-  editablePhoto.style.filter =
-  checkedButton.value === 'chrome'
-    ? `grayscale(${effectValue.value})`
-    : checkedButton.value === 'sepia'
-    ? `sepia(${effectValue.value})`
-    : checkedButton.value === 'marvin'
-    ? `invert(${effectValue.value}%)`
-    : checkedButton.value === 'phobos'
-    ? `blur(${effectValue.value}px)`
-    : checkedButton.value === 'heat'
-    ? `brightness(${effectValue.value})`
-    : '';
+  let filterPhoto = "";
+  switch (checkedButton.value) {
+    case 'chrome':
+      filterPhoto = `grayscale(${effectValue.value})`;
+      break;
+    case 'sepia':
+      filterPhoto = `sepia(${effectValue.value})`;
+      break;
+    case 'marvin':
+      filterPhoto = `invert(${effectValue.value}%)`;
+      break;
+    case 'phobos':
+      filterPhoto = `blur(${effectValue.value}px)`;
+      break;
+    case 'heat':
+      filterPhoto = `brightness(${effectValue.value})`;
+      break;
+    default:
+      filterPhoto = '';
+      break;
+  }
+  editablePhoto.style.filter = filterPhoto;
 });
 
 effectButtons.forEach((button) => {
   button.addEventListener('click', effectChange);
 });
 loader.addEventListener('change', openImageEditor);
-document.addEventListener('keyup', closeImageEditor);
+document.addEventListener('keyup', (evt) => {
+  if (evt.key === 'Escape')
+    closeImageEditor()
+});
 closeButton.addEventListener('click', closeImageEditor);
 zoomInButton.addEventListener('click', zoomInPhoto);
 zoomOutBotton.addEventListener('click', zoomOutPhoto);
+
+form.addEventListener('submit', (evt) => {
+  const pristine = new Pristine(form);
+  evt.preventDefault();
+  const IsValid = pristine.validate();
+  const formData = new FormData(evt.target);
+  if (IsValid) {
+    sendPhoto(formData,
+      () => {
+        console.log(1);
+        uploadSuccessMessage();
+        closeImageEditor();
+      },
+      uploadErrorMessage
+    );
+  }
+  else{
+    uploadErrorMessage();
+  }
+});
 
