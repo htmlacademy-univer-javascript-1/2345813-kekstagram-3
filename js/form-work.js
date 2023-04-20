@@ -1,4 +1,3 @@
-import '../nouislider/nouislider.js';
 import { uploadErrorMessage,uploadSuccessMessage } from './messages.js';
 import { sendPhoto } from './server-interaction.js';
 const loader = document.querySelector('#upload-file');
@@ -6,8 +5,16 @@ const photoEditor = document.querySelector('.img-upload__overlay');
 const closeButton = document.querySelector('#upload-cancel');
 const form = document.querySelector('.img-upload__form');
 const editablePhoto = document.querySelector('#editable-photo');
+const zoomInButton = document.querySelector('.scale__control--bigger');
+const zoomOutBotton = document.querySelector('.scale__control--smaller');
+const scaleValue = document.querySelector('.scale__control--value');
+const effectButtons = form.querySelectorAll('.effects__radio');
+let checkedButton = form.querySelector('#effect-none');
 
-function openImageEditor(evt) {
+const slider = form.querySelector('.effect-level__slider');
+const effectValue = form.querySelector('.effect-level__value');
+
+function openImageEditor() {
   photoEditor.classList.remove('hidden');
   document.body.classList.add('modal-open');
   const uploadedImage = document.querySelector('#upload-file').files[0];
@@ -16,8 +23,8 @@ function openImageEditor(evt) {
     editablePhoto.src = fileReader.result;
   };
   fileReader.readAsDataURL(uploadedImage);
+  slider.style.display = 'none';
 }
-
 
 function closeImageEditor() {
   photoEditor.classList.add('hidden');
@@ -27,11 +34,17 @@ function closeImageEditor() {
   editablePhoto.removeAttribute('style');
   editablePhoto.removeAttribute('class');
 
+
 }
 
-const zoomInButton = document.querySelector('.scale__control--bigger');
-const zoomOutBotton = document.querySelector('.scale__control--smaller');
-const scaleValue = document.querySelector('.scale__control--value');
+function closeImageEditorByEvent(evt){
+  if (evt.type !== 'keyup' || evt.key === 'Escape'){
+    closeImageEditor();
+  }
+}
+
+export {closeImageEditorByEvent};
+
 
 function zoomInPhoto() {
   const scale = Number(scaleValue.value.replace('%', ''));
@@ -51,11 +64,6 @@ function zoomOutPhoto() {
   }
 }
 
-const effectButtons = form.querySelectorAll('.effects__radio');
-let checkedButton = form.querySelector('#effect-none');
-
-const slider = form.querySelector('.effect-level__slider');
-const effectValue = form.querySelector('.effect-level__value');
 
 function getSliderOption(effect) {
   if (effect === 'chrome' || effect === 'sepia') {
@@ -127,7 +135,7 @@ function effectChange(evt) {
 
 slider.noUiSlider.on('update', () => {
   effectValue.value = slider.noUiSlider.get();
-  let filterPhoto = "";
+  let filterPhoto = '';
   switch (checkedButton.value) {
     case 'chrome':
       filterPhoto = `grayscale(${effectValue.value})`;
@@ -155,23 +163,18 @@ effectButtons.forEach((button) => {
   button.addEventListener('click', effectChange);
 });
 loader.addEventListener('change', openImageEditor);
-document.addEventListener('keyup', (evt) => {
-  if (evt.key === 'Escape')
-    closeImageEditor()
-});
-closeButton.addEventListener('click', closeImageEditor);
+document.addEventListener('keyup', closeImageEditorByEvent);
+closeButton.addEventListener('click', closeImageEditorByEvent);
 zoomInButton.addEventListener('click', zoomInPhoto);
 zoomOutBotton.addEventListener('click', zoomOutPhoto);
 
 form.addEventListener('submit', (evt) => {
   const pristine = new Pristine(form);
   evt.preventDefault();
-  const IsValid = pristine.validate();
-  const formData = new FormData(evt.target);
-  if (IsValid) {
+  if (pristine.validate()) {
+    const formData = new FormData(evt.target);
     sendPhoto(formData,
       () => {
-        console.log(1);
         uploadSuccessMessage();
         closeImageEditor();
       },
