@@ -1,5 +1,6 @@
-import { uploadErrorMessage,uploadSuccessMessage } from './messages.js';
+import { uploadErrorMessage, uploadSuccessMessage } from './messages.js';
 import { sendPhoto } from './server-interaction.js';
+import { getSliderOption } from './data.js';
 const loader = document.querySelector('#upload-file');
 const photoEditor = document.querySelector('.img-upload__overlay');
 const closeButton = document.querySelector('#upload-cancel');
@@ -9,107 +10,43 @@ const zoomInButton = document.querySelector('.scale__control--bigger');
 const zoomOutBotton = document.querySelector('.scale__control--smaller');
 const scaleValue = document.querySelector('.scale__control--value');
 const effectButtons = form.querySelectorAll('.effects__radio');
+const fileInput = document.querySelector('#upload-file');
 let checkedButton = form.querySelector('#effect-none');
-
 const slider = form.querySelector('.effect-level__slider');
 const effectValue = form.querySelector('.effect-level__value');
-
-function openImageEditor() {
-  photoEditor.classList.remove('hidden');
-  document.body.classList.add('modal-open');
-  const uploadedImage = document.querySelector('#upload-file').files[0];
-  const fileReader = new FileReader();
-  fileReader.onloadend = function () {
-    editablePhoto.src = fileReader.result;
-  };
-  fileReader.readAsDataURL(uploadedImage);
-  slider.style.display = 'none';
-}
-
-function closeImageEditor() {
-  photoEditor.classList.add('hidden');
-  document.body.classList.remove('modal-open');
-
-  form.reset();
-  editablePhoto.removeAttribute('style');
-  editablePhoto.removeAttribute('class');
+const pristine = new Pristine(form);
+const MIN_SCALE = 25;
+const MAX_SCALE = 100;
 
 
-}
+const validateComment = (value) => {
+  const MIN_LENGTH = 20;
+  const MAX_LENGTH = 140;
+  return value.length >= MIN_LENGTH && value.length <= MAX_LENGTH - 1;
+};
 
-function closeImageEditorByEvent(evt){
-  if (evt.type !== 'keyup' || evt.key === 'Escape'){
-    closeImageEditor();
-  }
-}
-
-export {closeImageEditorByEvent};
-
+pristine.addValidator(
+  form.querySelector('.text__description'),
+  validateComment
+);
 
 function zoomInPhoto() {
   const scale = Number(scaleValue.value.replace('%', ''));
-  if (scale !== 100) {
-    const newScale = scale + 25;
-    editablePhoto.style = `transform: scale(${newScale / 100})`;
+  if (scale !== MAX_SCALE) {
+    const newScale = scale + MIN_SCALE;
+    editablePhoto.style = `transform: scale(${newScale / MAX_SCALE})`;
     scaleValue.value = `${newScale}%`;
   }
 }
 
 function zoomOutPhoto() {
   const scale = Number(scaleValue.value.replace('%', ''));
-  if (scale !== 25) {
-    const newScale = scale - 25;
-    editablePhoto.style = `transform: scale(${newScale / 100})`;
+  if (scale !== MIN_SCALE) {
+    const newScale = scale - MIN_SCALE;
+    editablePhoto.style = `transform: scale(${newScale / MAX_SCALE})`;
     scaleValue.value = `${newScale}%`;
   }
 }
-
-
-function getSliderOption(effect) {
-  if (effect === 'chrome' || effect === 'sepia') {
-    return {
-      range: {
-        min: 0,
-        max: 1,
-      },
-      start: 1,
-      step: 0.1,
-      connect: 'lower',
-    };
-  }
-  else if (effect === 'marvin') {
-    return {
-      range: {
-        min: 0,
-        max: 100,
-      },
-      start: 100,
-    };
-  }
-  else if (effect === 'phobos') {
-    return {
-      range: {
-        min: 0,
-        max: 3,
-      },
-      start: 3,
-      step: 0.1,
-    };
-  }
-  else if (effect === 'heat') {
-    return {
-      range: {
-        min: 1,
-        max: 3,
-      },
-      start: 3,
-      step: 0.1,
-    };
-  }
-}
-
-noUiSlider.create(slider, getSliderOption('chrome'));
-slider.style.display = 'none';
 
 function effectChange(evt) {
   const pressedButton = evt.target;
@@ -132,6 +69,82 @@ function effectChange(evt) {
     }
   }
 }
+
+function CheckAndSubmitForm(evt) {
+  evt.preventDefault();
+  const submitButton = document.querySelector('#upload-submit');
+  submitButton.disabled = true;
+
+  if (pristine.validate()) {
+    const formData = new FormData(evt.target);
+    sendPhoto(formData,
+      () => {
+        uploadSuccessMessage();
+        closeImageEditor();
+      },
+      uploadErrorMessage
+    );
+  }
+  else {
+    uploadErrorMessage();
+  }
+  submitButton.disabled = false;
+}
+
+
+function openImageEditor() {
+  const uploadedFile = fileInput.files[0];
+  photoEditor.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+  const fileReader = new FileReader();
+  fileReader.onloadend = function () {
+    editablePhoto.src = fileReader.result;
+  };
+  fileReader.readAsDataURL(uploadedFile);
+  slider.style.display = 'none';
+
+  effectButtons.forEach((button) => {
+    button.addEventListener('click', effectChange);
+  });
+  document.addEventListener('keyup', closeImageEditorByEvent);
+  closeButton.addEventListener('click', closeImageEditorByEvent);
+  zoomInButton.addEventListener('click', zoomInPhoto);
+  zoomOutBotton.addEventListener('click', zoomOutPhoto);
+  form.addEventListener('submit', CheckAndSubmitForm);
+
+  const imageTypes = ['image/jpeg', 'image/png'];
+  if (!uploadedFile || imageTypes.indexOf(uploadedFile.type) === -1) {
+    uploadErrorMessage();
+    closeImageEditor();
+  }
+}
+
+function closeImageEditor() {
+  photoEditor.classList.add('hidden');
+  document.body.classList.remove('modal-open');
+
+  form.reset();
+  editablePhoto.removeAttribute('style');
+  editablePhoto.removeAttribute('class');
+
+  effectButtons.forEach((button) => {
+    button.removeEventListener('click', effectChange);
+  });
+  document.removeEventListener('keyup', closeImageEditorByEvent);
+  closeButton.removeEventListener('click', closeImageEditorByEvent);
+  zoomInButton.removeEventListener('click', zoomInPhoto);
+  zoomOutBotton.removeEventListener('click', zoomOutPhoto);
+  form.removeEventListener('submit', CheckAndSubmitForm);
+}
+
+function closeImageEditorByEvent(evt) {
+  if (evt.type !== 'keyup' || evt.key === 'Escape') {
+    closeImageEditor();
+  }
+}
+noUiSlider.create(slider, getSliderOption('chrome'));
+slider.style.display = 'none';
+
 
 slider.noUiSlider.on('update', () => {
   effectValue.value = slider.noUiSlider.get();
@@ -159,30 +172,5 @@ slider.noUiSlider.on('update', () => {
   editablePhoto.style.filter = filterPhoto;
 });
 
-effectButtons.forEach((button) => {
-  button.addEventListener('click', effectChange);
-});
 loader.addEventListener('change', openImageEditor);
-document.addEventListener('keyup', closeImageEditorByEvent);
-closeButton.addEventListener('click', closeImageEditorByEvent);
-zoomInButton.addEventListener('click', zoomInPhoto);
-zoomOutBotton.addEventListener('click', zoomOutPhoto);
-
-form.addEventListener('submit', (evt) => {
-  const pristine = new Pristine(form);
-  evt.preventDefault();
-  if (pristine.validate()) {
-    const formData = new FormData(evt.target);
-    sendPhoto(formData,
-      () => {
-        uploadSuccessMessage();
-        closeImageEditor();
-      },
-      uploadErrorMessage
-    );
-  }
-  else{
-    uploadErrorMessage();
-  }
-});
-
+export { closeImageEditorByEvent };
