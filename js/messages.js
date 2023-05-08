@@ -1,19 +1,56 @@
+import { closeImageEditorByEvent } from './form-work.js';
+
+let errorMessage;
+let succesMessage;
+
 function uploadSuccessMessage() {
-  console.log(1);
-  const succesMessage = document.querySelector('#success').content.cloneNode(true);
-  succesMessage.querySelector('.success__button').addEventListener('click', closeSuccessMessage);
-  document.body.appendChild(succesMessage);
+  const clonedSuccesMessage = document.querySelector('#success').content.cloneNode(true);
+  clonedSuccesMessage.querySelector('.success__button').addEventListener('click', closeSuccessMessage);
+  document.addEventListener('click', closeSuccessMessageOnAnotherClick);
+  document.addEventListener('keyup', closeSuccessMessage);
+  document.body.appendChild(clonedSuccesMessage);
+  succesMessage = document.body.querySelector('.success');
 }
-function closeSuccessMessage() {
-  document.body.querySelector('.success').remove();
+function closeSuccessMessage(evt) {
+  if (evt.type !== 'keyup' || evt.key === 'Escape') {
+    document.removeEventListener('keyup', closeSuccessMessage);
+    document.querySelector('.success__button').removeEventListener('click', closeSuccessMessage);
+    document.removeEventListener('click', closeSuccessMessageOnAnotherClick);
+    succesMessage.remove();
+    document.removeEventListener('keyup', closeSuccessMessage);
+  }
+}
+
+function closeSuccessMessageOnAnotherClick(evt){
+  if(evt.target===succesMessage){
+    closeSuccessMessage(evt);
+  }
 }
 function uploadErrorMessage() {
-  const errorMessage = document.querySelector('#error').content.cloneNode(true);
-  errorMessage.querySelector('.error__button').addEventListener('click', closeErrorMessage);
-  document.body.appendChild(errorMessage);
-  document.querySelector('.error').style.zIndex = '999';
+  const clonedErrorMessage = document.querySelector('#error').content.cloneNode(true);
+  clonedErrorMessage.querySelector('.error__button').addEventListener('click', closeErrorMessage);
+  document.addEventListener('click', closeErrorMessageOnAnotherClick);
+  document.addEventListener('keyup', closeErrorMessage);
+  document.body.appendChild(clonedErrorMessage);
+  errorMessage = document.body.querySelector('.error');
+  errorMessage.style.zIndex = '999';
+
+  document.removeEventListener('keyup', closeImageEditorByEvent);
 }
-function closeErrorMessage() {
-  document.body.querySelector('.error').remove();
+function closeErrorMessage(evt) {
+  if (evt.type !== 'keyup' || evt.key === 'Escape') {
+    errorMessage.querySelector('.error__button').addEventListener('click', closeErrorMessage);
+    document.removeEventListener('click', closeErrorMessageOnAnotherClick);
+    document.removeEventListener('keyup', closeErrorMessage);
+    errorMessage.remove();
+
+    document.addEventListener('keyup', closeImageEditorByEvent);
+    document.removeEventListener('keyup', closeErrorMessage);
+  }
 }
-export {uploadErrorMessage,uploadSuccessMessage}
+function closeErrorMessageOnAnotherClick(evt){
+  if(evt.target===errorMessage){
+    closeErrorMessage(evt);
+  }
+}
+export { uploadErrorMessage, uploadSuccessMessage };

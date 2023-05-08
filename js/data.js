@@ -1,25 +1,43 @@
-import { getRandomNumber } from './util.js';
-
-const DESCRIPTIONS = ['beautiful', 'sad', 'funny', 'sad', 'boring'];
-
-function generatePhotoObject(id, url, descrition, likes, comments) {
-  const photo = {
-    id,
-    url,
-    descrition,
-    likes,
-    comments,
-  };
-  return photo;
-}
-
-function generateRandomPhotoObjects(number) {
-  const photos = new Array(number);
-
-  for (let i = 1; i <= number; i++) {
-    photos[i - 1] = generatePhotoObject(i, `photos/${i}.jpg`, DESCRIPTIONS[i % 5], getRandomNumber(15, 200), getRandomNumber(0, 200));
+function getSliderOption(effect) {
+  if (effect === 'chrome' || effect === 'sepia') {
+    return {
+      range: {
+        min: 0,
+        max: 1,
+      },
+      start: 1,
+      step: 0.1,
+      connect: 'lower',
+    };
   }
-  return photos;
+  else if (effect === 'marvin') {
+    return {
+      range: {
+        min: 0,
+        max: 100,
+      },
+      start: 100,
+    };
+  }
+  else if (effect === 'phobos') {
+    return {
+      range: {
+        min: 0,
+        max: 3,
+      },
+      start: 3,
+      step: 0.1,
+    };
+  }
+  else if (effect === 'heat') {
+    return {
+      range: {
+        min: 1,
+        max: 3,
+      },
+      start: 3,
+      step: 0.1,
+    };
+  }
 }
-
-export { generateRandomPhotoObjects };
+export { getSliderOption };
